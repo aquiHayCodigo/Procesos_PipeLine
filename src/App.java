@@ -174,34 +174,29 @@ public class App {
         }
     }
 
-    public static void contador2() { // no funciona
+    public static void contador2() { 
         limpiarPantalla();
         String bat = "contar_palabras.bat";
         String texto = "archivo.txt";
-        File fileT= new File(texto);
         String palabra = "robar";
-        ProcessBuilder pb1 = new ProcessBuilder(bat, palabra);
-        pb1.redirectInput(fileT);
+        ProcessBuilder pb = new ProcessBuilder(bat, texto, palabra);
 
         String resultado = "resultado.txt";
         File fileR = new File(resultado);
-        ProcessBuilder pb2 =  new ProcessBuilder("cmd", "/c");
-        pb2.redirectOutput(fileR);
-
-        List<ProcessBuilder> listaPB= List.of(pb1, pb2);
 
         try (
-            BufferedReader br = new BufferedReader( new FileReader(fileR));
+                Process p = pb.start();
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                BufferedWriter bw = new BufferedWriter(new FileWriter(fileR)); 
         ) {
-            List<Process> procesos = ProcessBuilder.startPipeline(listaPB);
-            Process last = procesos.getLast();
-            last.waitFor();
-
-            String r = br.readLine();
-            System.out.println(r);
-        } catch (Exception e) {
+            p.waitFor();
+            String linea = br.readAllAsString();
+            bw.write(linea);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        
     }
 
     public static void menu() {
