@@ -1,4 +1,3 @@
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,6 +20,7 @@ public class App {
     public static void main(String[] args) throws Exception {
         System.out.println("Menú ejercicios: ");
         boolean menu = true;
+        boolean ok = false;
 
         while (menu) {
             System.out.println("1. Proceso Guardián");
@@ -39,7 +39,22 @@ public class App {
                     break;
 
                 case 2:
-                    contador();
+                    ok = false;
+                    while (!ok) {
+                        System.out.print("Ejecución (S)imple o con (P)ipeline: ");
+                        String version = sc.nextLine();
+                        version.trim();
+
+                        if (version.equalsIgnoreCase("s")) {
+                            contador();
+                            ok = true;
+                        } else if (version.equalsIgnoreCase("p")) {
+                            contador2();
+                            ok = true;
+                        } else {
+                            System.out.println("Esa letra de ké, vuelve a escribir la letra...");
+                        }
+                    }
                     break;
 
                 case 3:
@@ -47,7 +62,7 @@ public class App {
                     break;
 
                 case 4:
-                    boolean ok = false;
+                    ok = false;
                     while (!ok) {
                         System.out.print("Ejecución (S)imple o con (P)ipeline: ");
                         String version = sc.nextLine();
@@ -157,6 +172,36 @@ public class App {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public static void contador2() { // no funciona
+        limpiarPantalla();
+        String bat = "contar_palabras.bat";
+        String texto = "archivo.txt";
+        File fileT= new File(texto);
+        String palabra = "robar";
+        ProcessBuilder pb1 = new ProcessBuilder(bat, palabra);
+        pb1.redirectInput(fileT);
+
+        String resultado = "resultado.txt";
+        File fileR = new File(resultado);
+        ProcessBuilder pb2 =  new ProcessBuilder("cmd", "/c");
+        pb2.redirectOutput(fileR);
+
+        List<ProcessBuilder> listaPB= List.of(pb1, pb2);
+
+        try (
+            BufferedReader br = new BufferedReader( new FileReader(fileR));
+        ) {
+            List<Process> procesos = ProcessBuilder.startPipeline(listaPB);
+            Process last = procesos.getLast();
+            last.waitFor();
+
+            String r = br.readLine();
+            System.out.println(r);
+        } catch (Exception e) {
+        }
+        
     }
 
     public static void menu() {
@@ -338,7 +383,7 @@ public class App {
             while ((linea = br2.readLine()) != null) {
                 i++;
             }
-            i = i-3;
+            i = i - 3;
             fw2.write(i);
         } catch (Exception e) {
             e.printStackTrace();
@@ -349,8 +394,7 @@ public class App {
         ProcessBuilder pb = new ProcessBuilder("tasklist");
         try (
                 Process p = pb.start();
-                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            ) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));) {
             String linea;
             String tasks = " ";
             int i = 0;
