@@ -123,4 +123,8 @@ public class Trabajo {
             e.printStackTrace();        }
 
     }
+
+    public void corregirTraducirPipeLineV2(){
+        
+    }
 }

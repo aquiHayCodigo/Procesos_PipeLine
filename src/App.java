@@ -23,12 +23,14 @@ public class App {
         boolean ok = false;
 
         while (menu) {
+            System.out.println("- - - - - - - - - - - - - -");
             System.out.println("1. Proceso Guardián");
             System.out.println("2. Contador Apariciones");
             System.out.println("3. Menú interactivo");
             System.out.println("4. Suma de cuadrados");
             System.out.println("5. Chapi Chapuzas");
             System.out.println("6. Contador lineas tasklist");
+            System.out.println("- - - - - - - - - - - - - -");
 
             System.out.print("Ejecutar ejercicio: ");
             int opc = Integer.parseInt(sc.nextLine());
@@ -49,7 +51,7 @@ public class App {
                             contador();
                             ok = true;
                         } else if (version.equalsIgnoreCase("p")) {
-                            contador2();
+                            contador4();
                             ok = true;
                         } else {
                             System.out.println("Esa letra de ké, vuelve a escribir la letra...");
@@ -86,7 +88,7 @@ public class App {
                     break;
 
                 case 6:
-                    tasklistSimple();
+                    tasklistSimple2();
                     break;
 
                 default:
@@ -137,7 +139,10 @@ public class App {
         ProcessBuilder navegador = new ProcessBuilder("cmd", "/c",
                 "start duckduckgo https://www.youtube.com/watch?v=Y4IO3GwsFPs");
         try (Process p1 = navegador.start();) {
-
+            int exitCode = p1.waitFor();
+            if(exitCode==0){
+                System.out.println("Se ha abierto DuckduckGO");
+            }
         } catch (Exception e) {
             e.getMessage();
         }
@@ -196,6 +201,60 @@ public class App {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void contador3 () throws Exception{
+        limpiarPantalla();
+        String bat = "contar_palabras.bat";
+        String palabra = "que";
+        List<String> archivos = List.of("archivo.txt", "archivo2.txt", "archivo3.txt");
+
+        ProcessBuilder pb=new ProcessBuilder("cmd", "/c");
+        // BUCLE EJECUTANDO VARIOS PB
+        for (String archivo : archivos) {
+            pb = new ProcessBuilder(bat, archivo, palabra);
+        }
+
+        String resultado = "resultado3.txt";
+        File fResultado = new File(resultado);
+        pb.redirectOutput(ProcessBuilder.Redirect.appendTo(fResultado));
+        if(fResultado.exists()){
+            fResultado.delete();
+        }
+        Process p =pb.start();
+        int exitCode = p.waitFor(); // p.exitValue();
+        if(exitCode==0){
+            System.err.println("El proceso finalizó con código de error: " + exitCode);
+        }
+        int cant = 0;
+        if(fResultado.exists()){
+            try (
+                BufferedReader br = new BufferedReader(new FileReader(fResultado));
+            ) {
+                String linea = br.readLine();
+                cant = Integer.parseInt(linea);
+                System.out.println(cant);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void contador4(){
+        File file1 = new File("archivo.txt");
+        File file2 = new File("archivo2.txt");
+        File file3 = new File("archivo3.txt");
+        List<File> lista = List.of(file1, file2, file3);
+        File result1 = new File("resultado1.txt");
+        File result2 = new File("resultado2.txt");
+        File result3 = new File("resultado3.txt");
+        List<File> resultado = List.of(result1, result2, result3);
+        int i=0;
+        for (File file : lista) {
+            Contador ej = new Contador(file, resultado.get(i));
+            ej.contando();
+            i++;
         }
     }
 
@@ -317,6 +376,10 @@ public class App {
         }
     }
 
+    public static void sumaCuadradosV3(){
+        
+    }
+
     public static void chapuzas() {
         boolean m = true;
         while (m) {
@@ -385,11 +448,14 @@ public class App {
         }
     }
 
-    public static void tasklistSimple2() throws Exception {
+    public static void tasklistSimple2(){
+        File file = new File("tasklist.txt");
         ProcessBuilder pb = new ProcessBuilder("tasklist");
+        pb.redirectOutput(file);
         try (
-                Process p = pb.start();
-                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));) {
+            Process p = pb.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        ) {
             String linea;
             String tasks = " ";
             int i = 0;
