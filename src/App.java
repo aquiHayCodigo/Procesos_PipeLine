@@ -30,6 +30,7 @@ public class App {
             System.out.println("4. Suma de cuadrados");
             System.out.println("5. Chapi Chapuzas");
             System.out.println("6. Contador lineas tasklist");
+            System.out.println("7. Mixeando");
             System.out.println("- - - - - - - - - - - - - -");
 
             System.out.print("Ejecutar ejercicio: ");
@@ -88,7 +89,28 @@ public class App {
                     break;
 
                 case 6:
-                    tasklistSimple2();
+                    ok = false;
+                    while (!ok) {
+                        System.out.print("Ejecución Versión 1, 2 o 3: ");
+                        int version = Integer.parseInt(sc.nextLine());
+
+                        if (version==1) {
+                            tasklistSimple();
+                            ok = true;
+                        } else if (version==2) {
+                            tasklistSimple2();
+                            ok = true;
+                        }else if(version==3){
+                            tasklistClase();
+                        } 
+                        else{
+                            System.out.println("Ese numero de ké, vuelve a escribir la letra...");
+                        }
+                    }
+                    break;
+
+                case 7:
+                    mix();
                     break;
 
                 default:
@@ -140,7 +162,7 @@ public class App {
                 "start duckduckgo https://www.youtube.com/watch?v=Y4IO3GwsFPs");
         try (Process p1 = navegador.start();) {
             int exitCode = p1.waitFor();
-            if(exitCode==0){
+            if (exitCode == 0) {
                 System.out.println("Se ha abierto DuckduckGO");
             }
         } catch (Exception e) {
@@ -179,7 +201,7 @@ public class App {
         }
     }
 
-    public static void contador2() { 
+    public static void contador2() {
         limpiarPantalla();
         String bat = "contar_palabras.bat";
         String texto = "archivo.txt";
@@ -192,8 +214,7 @@ public class App {
         try (
                 Process p = pb.start();
                 BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(fileR)); 
-        ) {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(fileR));) {
             p.waitFor();
             String linea = br.readAllAsString();
             bw.write(linea);
@@ -204,13 +225,13 @@ public class App {
         }
     }
 
-    public static void contador3 () throws Exception{
+    public static void contador3() throws Exception {
         limpiarPantalla();
         String bat = "contar_palabras.bat";
         String palabra = "que";
         List<String> archivos = List.of("archivo.txt", "archivo2.txt", "archivo3.txt");
 
-        ProcessBuilder pb=new ProcessBuilder("cmd", "/c");
+        ProcessBuilder pb = new ProcessBuilder("cmd", "/c");
         // BUCLE EJECUTANDO VARIOS PB
         for (String archivo : archivos) {
             pb = new ProcessBuilder(bat, archivo, palabra);
@@ -219,19 +240,18 @@ public class App {
         String resultado = "resultado3.txt";
         File fResultado = new File(resultado);
         pb.redirectOutput(ProcessBuilder.Redirect.appendTo(fResultado));
-        if(fResultado.exists()){
+        if (fResultado.exists()) {
             fResultado.delete();
         }
-        Process p =pb.start();
+        Process p = pb.start();
         int exitCode = p.waitFor(); // p.exitValue();
-        if(exitCode==0){
+        if (exitCode == 0) {
             System.err.println("El proceso finalizó con código de error: " + exitCode);
         }
         int cant = 0;
-        if(fResultado.exists()){
+        if (fResultado.exists()) {
             try (
-                BufferedReader br = new BufferedReader(new FileReader(fResultado));
-            ) {
+                    BufferedReader br = new BufferedReader(new FileReader(fResultado));) {
                 String linea = br.readLine();
                 cant = Integer.parseInt(linea);
                 System.out.println(cant);
@@ -241,7 +261,7 @@ public class App {
         }
     }
 
-    public static void contador4(){
+    public static void contador4() {
         File file1 = new File("archivo.txt");
         File file2 = new File("archivo2.txt");
         File file3 = new File("archivo3.txt");
@@ -250,7 +270,7 @@ public class App {
         File result2 = new File("resultado2.txt");
         File result3 = new File("resultado3.txt");
         List<File> resultado = List.of(result1, result2, result3);
-        int i=0;
+        int i = 0;
         for (File file : lista) {
             Contador ej = new Contador(file, resultado.get(i));
             ej.contando();
@@ -376,8 +396,8 @@ public class App {
         }
     }
 
-    public static void sumaCuadradosV3(){
-        
+    public static void sumaCuadradosV3() {
+
     }
 
     public static void chapuzas() {
@@ -432,7 +452,8 @@ public class App {
                 BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 FileWriter fw = new FileWriter(file);
                 BufferedReader br2 = new BufferedReader(new FileReader(file));
-                FileWriter fw2 = new FileWriter(file2);) {
+                FileWriter fw2 = new FileWriter(file2);
+            ) {
             String linea;
             int i = 0;
             while ((linea = br.readLine()) != null) {
@@ -448,14 +469,13 @@ public class App {
         }
     }
 
-    public static void tasklistSimple2(){
+    public static void tasklistSimple2() {
         File file = new File("tasklist.txt");
         ProcessBuilder pb = new ProcessBuilder("tasklist");
         pb.redirectOutput(file);
         try (
-            Process p = pb.start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        ) {
+                Process p = pb.start();
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));) {
             String linea;
             String tasks = " ";
             int i = 0;
@@ -471,7 +491,44 @@ public class App {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+    
+    public static void tasklistClase(){
+        limpiarPantalla();
+        Tasklist t1 = new Tasklist();
+        t1.t1();
+    }
+
+    public static void mix() {
+        limpiarPantalla();
+        String ruta = "C:\\Users\\claud\\Downloads";
+        File file = new File(ruta);
+        ProcessBuilder pb1 = new ProcessBuilder("cmd", "/c", "dir").directory(file);
+        ProcessBuilder pb2 = new ProcessBuilder("cmd", "/c", "findstr", "pdf").directory(file);
+        pb2.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+        List<ProcessBuilder> pbs = List.of( pb1, pb2);
+        try {
+            List<Process> procesos = ProcessBuilder.startPipeline(pbs);
+            Process last = procesos.getLast();
+            try (
+                    BufferedReader br = new BufferedReader(new InputStreamReader(last.getInputStream()))
+                ) {
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    System.out.println(linea + "\n");
+                }
+                /* 
+                for (Process process : procesos) {
+                    process.waitFor();
+                } */
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+        } catch (IOException e) {
+            System.out.println("IO EXCEPTION: " + e.getMessage());
+        } 
+    }
+
 
 }
