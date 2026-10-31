@@ -94,17 +94,17 @@ public class App {
                         System.out.print("Ejecución Versión 1, 2 o 3: ");
                         int version = Integer.parseInt(sc.nextLine());
 
-                        if (version==1) {
+                        if (version == 1) {
                             tasklistSimple();
                             ok = true;
-                        } else if (version==2) {
+                        } else if (version == 2) {
                             tasklistSimple2();
                             ok = true;
-                        }else if(version==3){
+                        } else if (version == 3) {
                             tasklistClase();
-                        } 
-                        else{
-                            System.out.println("Ese numero de ké, vuelve a escribir la letra...");
+                            ok = true;
+                        } else {
+                            System.out.println("Ese numero de ké, vuelve a escribirlo...");
                         }
                     }
                     break;
@@ -444,6 +444,7 @@ public class App {
     }
 
     public static void tasklistSimple() {
+        limpiarPantalla();
         ProcessBuilder tasklist = new ProcessBuilder("cmd", "/c", "tasklist");
         File file = new File("lineas.txt");
         File file2 = new File("numero.txt");
@@ -452,8 +453,7 @@ public class App {
                 BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 FileWriter fw = new FileWriter(file);
                 BufferedReader br2 = new BufferedReader(new FileReader(file));
-                FileWriter fw2 = new FileWriter(file2);
-            ) {
+                FileWriter fw2 = new FileWriter(file2);) {
             String linea;
             int i = 0;
             while ((linea = br.readLine()) != null) {
@@ -470,6 +470,7 @@ public class App {
     }
 
     public static void tasklistSimple2() {
+        limpiarPantalla();
         File file = new File("tasklist.txt");
         ProcessBuilder pb = new ProcessBuilder("tasklist");
         pb.redirectOutput(file);
@@ -492,11 +493,27 @@ public class App {
             e.printStackTrace();
         }
     }
-    
-    public static void tasklistClase(){
+
+    public static void tasklistClase() {
         limpiarPantalla();
-        Tasklist t1 = new Tasklist();
-        t1.t1();
+        Tasklist tasklist = new Tasklist();
+
+        boolean ok = false;
+        while (!ok) {
+            System.out.print("Ejecución Versión 1 o 2: ");
+            int version = Integer.parseInt(sc.nextLine());
+
+            if (version == 1) {
+                tasklist.t1();
+                ok = true;
+            } else if (version == 2) {
+                tasklist.t2();
+                ok = true;
+            } else {
+                System.out.println("Ese numero de ké, vuelve a escribirlo ...");
+            }
+        }
+
     }
 
     public static void mix() {
@@ -506,29 +523,28 @@ public class App {
         ProcessBuilder pb1 = new ProcessBuilder("cmd", "/c", "dir").directory(file);
         ProcessBuilder pb2 = new ProcessBuilder("cmd", "/c", "findstr", "pdf").directory(file);
         pb2.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-        List<ProcessBuilder> pbs = List.of( pb1, pb2);
+        List<ProcessBuilder> pbs = List.of(pb1, pb2);
         try {
             List<Process> procesos = ProcessBuilder.startPipeline(pbs);
             Process last = procesos.getLast();
             try (
-                    BufferedReader br = new BufferedReader(new InputStreamReader(last.getInputStream()))
-                ) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(last.getInputStream()))) {
                 String linea;
                 while ((linea = br.readLine()) != null) {
                     System.out.println(linea + "\n");
                 }
-                /* 
-                for (Process process : procesos) {
-                    process.waitFor();
-                } */
+                /*
+                 * for (Process process : procesos) {
+                 * process.waitFor();
+                 * }
+                 */
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
         } catch (IOException e) {
             System.out.println("IO EXCEPTION: " + e.getMessage());
-        } 
+        }
     }
-
 
 }
